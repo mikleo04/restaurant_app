@@ -89,6 +89,8 @@ class DetailPage extends StatelessWidget {
                     restaurant.description,
                     textAlign: TextAlign.justify,
                     style: Theme.of(context).textTheme.bodyText2,
+                    maxLines: 8,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 15),
