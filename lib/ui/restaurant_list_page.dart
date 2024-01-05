@@ -1,11 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:restaurant_app/common/style.dart';
-import 'package:restaurant_app/model/restaurant.dart';
+import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/data/model/restaurant.dart';
+import 'package:restaurant_app/widgets/card_restaurant.dart';
 import 'detail_page.dart';
 
-class RestaurantListPage extends StatelessWidget {
+class RestaurantListPage extends StatefulWidget {
   const RestaurantListPage({super.key});
+
+  @override
+  State<RestaurantListPage> createState() => _RestaurantListPageState();
+}
+
+class _RestaurantListPageState extends State<RestaurantListPage> {
+  late Future<RestaurantsResult> _restaurant;
+
+  @override
+  void initState() {
+    super.initState();
+    _restaurant = ApiService(endpoints: '/list').topRestaurants();
+  }
+
+  Widget _buildList(BuildContext context) {
+    return FutureBuilder<RestaurantsResult>(
+      future: _restaurant,
+      builder: (context, AsyncSnapshot<RestaurantsResult> snapshot) {
+        var state = snapshot.connectionState;
+        if (state != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data?.restaurants.length,
+              itemBuilder: (context, index) {
+                var restaurant = snapshot.data?.restaurants[index];
+                return CardRestaurant(restaurant: restaurant!);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Material(
+                child: Text(snapshot.error.toString()),
+              ),
+            );
+          } else {
+            return const Material(child: Text(''));
+          }
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +80,7 @@ class RestaurantListPage extends StatelessWidget {
                             hintText: 'Search...',
                             border: InputBorder.none,
                             contentPadding:
-                                EdgeInsets.symmetric(horizontal: 16.0),
+                            EdgeInsets.symmetric(horizontal: 16.0),
                           ),
                         ),
                       ),
@@ -79,36 +125,6 @@ class RestaurantListPage extends StatelessWidget {
     );
   }
 
-  FutureBuilder<String> _buildList(BuildContext context) {
-    return FutureBuilder<String>(
-      future: DefaultAssetBundle.of(context).loadString('assets/local_restaurant.json'),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return _buildErrorWidget();
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingWidget();
-        }
-
-        final List<Restaurant> restaurants = parseRestaurants(snapshot.data);
-
-        if (restaurants.isEmpty) {
-          return const Center(
-            child: Text('No data found'),
-          );
-        }
-
-        return ListView.builder(
-          itemCount: restaurants.length,
-          itemBuilder: (context, index) {
-            return _buildArticleItem(context, restaurants[index]);
-          },
-        );
-      },
-    );
-  }
-
   Widget _buildErrorWidget() {
     return const Center(
       child: Column(
@@ -135,8 +151,6 @@ class RestaurantListPage extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget _buildArticleItem(BuildContext context, Restaurant restaurant) {
     return Card(

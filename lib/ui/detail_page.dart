@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/common/style.dart';
-import 'package:restaurant_app/model/restaurant.dart';
+import 'package:restaurant_app/data/model/restaurant.dart';
 
 class DetailPage extends StatelessWidget {
   static const routeName = '/article_detail';
   final Restaurant restaurant;
+
   const DetailPage({super.key, required this.restaurant});
 
   @override
@@ -19,7 +20,7 @@ class DetailPage extends StatelessWidget {
               background: Hero(
                 tag: restaurant.pictureId,
                 child: Image.network(
-                  restaurant.pictureId,
+                  restaurant.getFullImageUrl(),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -56,7 +57,10 @@ class DetailPage extends StatelessWidget {
                             ),
                             Text(
                               restaurant.city,
-                              style: Theme.of(context).textTheme.headline5,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .headline5,
                             ),
                           ],
                         ),
@@ -75,7 +79,10 @@ class DetailPage extends StatelessWidget {
                             ),
                             Text(
                               restaurant.rating.toString(),
-                              style: Theme.of(context).textTheme.headline5,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .headline5,
                             ),
                           ],
                         ),
@@ -86,29 +93,15 @@ class DetailPage extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    restaurant.description,
+                    restaurant.description ?? "",
                     textAlign: TextAlign.justify,
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodyText2,
                     maxLines: 8,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    child: Text(
-                      "Minuman",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                  ),
-                  buildListMenu(
-                      restaurant.menus.drinks, 'assets/iced-coffee.png'),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Text(
-                          "Makanan",
-                          style: Theme.of(context).textTheme.headline6
-                      )
-                  ),
-                  buildListMenu(restaurant.menus.foods, 'assets/bibimbap.png'),
                   const SizedBox(
                     height: 20,
                   ),
@@ -148,63 +141,6 @@ class DetailPage extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  SizedBox buildListMenu(menu, image) {
-    return SizedBox(
-      height: 150,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: menu.length,
-        itemExtent: 170.0,
-        itemBuilder: (context, index) {
-          final data = menu[index];
-          return Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Stack(
-              alignment: Alignment.bottomLeft,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  child: Image.asset(
-                    image,
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    width: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
-                      ),
-                      color: Colors.brown.withOpacity(0.5),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Text(
-                        data.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
       ),
     );
   }
