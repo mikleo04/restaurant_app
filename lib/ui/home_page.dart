@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/style.dart';
+import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/ui/restaurant_list_page.dart';
 import 'package:restaurant_app/ui/setting_page.dart';
 
@@ -24,7 +27,10 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
   final List<Widget> _listWidget = [
-    const RestaurantListPage(),
+    ChangeNotifierProvider<RestaurantProvider>(
+      create: (_) => RestaurantProvider(apiService: ApiService(endpoints: '/list')),
+      child: const RestaurantListPage(),
+    ),
     const SettingPage(),
   ];
 
