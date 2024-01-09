@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
+import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/ui/detail_page.dart';
 
 class CardRestaurant extends StatelessWidget {
@@ -15,8 +18,17 @@ class CardRestaurant extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, DetailPage.routeName,
-              arguments: restaurant);
+          RestaurantProvider restaurantProvider = RestaurantProvider(apiService: ApiService(endpoints: '/list/'));
+          restaurantProvider.fetchDetailRestaurant(restaurant.id);
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider.value(
+                value: restaurantProvider,
+                child: DetailPage(restaurantId: restaurant.id),
+              ),
+            ),
+          );
         },
         child: Row(
           children: [

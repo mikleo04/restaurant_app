@@ -29,10 +29,7 @@ class MyApp extends StatelessWidget {
       routes: {
         SplashScreenPage.routeName: (context) => const SplashScreenPage(),
         HomePage.routeName: (context) => const HomePage(),
-        DetailPage.routeName: (context) => DetailPage(
-            restaurant:
-                ModalRoute.of(context)?.settings.arguments as Restaurant
-        ),
+        DetailPage.routeName: (context) => const DetailPage(restaurantId: '',),
       },
     );
   }
