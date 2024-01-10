@@ -18,16 +18,10 @@ class CardRestaurant extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          RestaurantProvider restaurantProvider = RestaurantProvider(apiService: ApiService(endpoints: '/list/'));
-          restaurantProvider.fetchDetailRestaurant(restaurant.id);
-
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider.value(
-                value: restaurantProvider,
-                child: DetailPage(restaurantId: restaurant.id),
-              ),
-            ),
+          Navigator.pushNamed(
+            context,
+            DetailPage.routeName,
+            arguments: restaurant,
           );
         },
         child: Row(

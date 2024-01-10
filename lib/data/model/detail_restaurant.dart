@@ -1,9 +1,5 @@
 import 'dart:convert';
 
-DetailRestaurantResult detailRestaurantResultFromJson(String str) => DetailRestaurantResult.fromJson(json.decode(str));
-
-String detailRestaurantResultToJson(DetailRestaurantResult data) => json.encode(data.toJson());
-
 class DetailRestaurantResult {
   bool error;
   String message;
@@ -38,7 +34,7 @@ class RestaurantDetail {
   List<Category> categories;
   Menus menus;
   double rating;
-  List<CustomerReview> customerReviews;
+  List<Review> customerReviews;
 
   RestaurantDetail({
     required this.id,
@@ -63,7 +59,7 @@ class RestaurantDetail {
     categories: List<Category>.from(json["categories"].map((x) => Category.fromJson(x))),
     menus: Menus.fromJson(json["menus"]),
     rating: json["rating"]?.toDouble(),
-    customerReviews: List<CustomerReview>.from(json["customerReviews"].map((x) => CustomerReview.fromJson(x))),
+    customerReviews: List<Review>.from(json["customerReviews"].map((x) => Review.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -100,30 +96,6 @@ class Category {
   };
 }
 
-class CustomerReview {
-  String name;
-  String review;
-  String date;
-
-  CustomerReview({
-    required this.name,
-    required this.review,
-    required this.date,
-  });
-
-  factory CustomerReview.fromJson(Map<String, dynamic> json) => CustomerReview(
-    name: json["name"],
-    review: json["review"],
-    date: json["date"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "name": name,
-    "review": review,
-    "date": date,
-  };
-}
-
 class Menus {
   List<Category> foods;
   List<Category> drinks;
@@ -141,5 +113,53 @@ class Menus {
   Map<String, dynamic> toJson() => {
     "foods": List<dynamic>.from(foods.map((x) => x.toJson())),
     "drinks": List<dynamic>.from(drinks.map((x) => x.toJson())),
+  };
+}
+
+class Foods {
+  Foods({required this.name});
+
+  String name;
+
+  factory Foods.fromJson(Map<String, dynamic> json) => Foods(
+    name: json["name"],
+  );
+
+  Map<String, dynamic> toJson() => {"name": name};
+}
+
+class Drinks {
+  Drinks({required this.name});
+
+  String name;
+
+  factory Drinks.fromJson(Map<String, dynamic> json) => Drinks(
+    name: json["name"],
+  );
+
+  Map<String, dynamic> toJson() => {"name": name};
+}
+
+class Review {
+  Review({
+    required this.name,
+    required this.review,
+    required this.date,
+  });
+
+  String name;
+  String review;
+  String date;
+
+  factory Review.fromJson(Map<String, dynamic> json) => Review(
+    name: json["name"],
+    review: json["review"],
+    date: json["date"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "review": review,
+    "date": date,
   };
 }

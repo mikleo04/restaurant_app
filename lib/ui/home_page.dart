@@ -27,10 +27,7 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
   final List<Widget> _listWidget = [
-    ChangeNotifierProvider<RestaurantProvider>(
-      create: (_) => RestaurantProvider(apiService: ApiService(endpoints: '/list')),
-      child: const RestaurantListPage(),
-    ),
+    const RestaurantListPage(),
     const SettingPage(),
   ];
 

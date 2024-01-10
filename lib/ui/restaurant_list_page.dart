@@ -35,6 +35,9 @@ class RestaurantListPage extends StatelessWidget {
                         ),
                         child: const TextField(
                           textAlign: TextAlign.start,
+                          // onChanged: (query) {
+                          //   restaurantProvider.fetchRestaurants(query: query);
+                          // },
                           decoration: InputDecoration(
                             hintText: 'Search...',
                             border: InputBorder.none,
