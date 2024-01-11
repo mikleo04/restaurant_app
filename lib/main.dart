@@ -4,6 +4,7 @@ import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/provider/restaurant_detail_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/provider/restaurant_search_provider.dart';
 import 'package:restaurant_app/ui/detail_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:restaurant_app/ui/home_page.dart';
@@ -28,6 +29,11 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => RestaurantProvider(
+            apiService: ApiService(http.Client()),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RestaurantSearchProvider(
             apiService: ApiService(http.Client()),
           ),
         ),

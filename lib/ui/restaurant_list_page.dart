@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/style.dart';
+import 'package:http/http.dart' as http;
+import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/provider/restaurant_search_provider.dart';
 import 'package:restaurant_app/widgets/card_restaurant.dart';
 import 'detail_page.dart';
 
@@ -33,16 +36,19 @@ class RestaurantListPage extends StatelessWidget {
                           color: Colors.grey.withAlpha(70),
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: const TextField(
+                        child: TextField(
                           textAlign: TextAlign.start,
-                          // onChanged: (query) {
-                          //   restaurantProvider.fetchRestaurants(query: query);
-                          // },
-                          decoration: InputDecoration(
+                          onChanged: (query) {
+                            // Panggil fungsi pencarian pada RestaurantSearchProvider
+                            Provider.of<RestaurantSearchProvider>(
+                              context,
+                              listen: false,
+                            ).fetchSearchRestaurant(query);
+                          },
+                          decoration: const InputDecoration(
                             hintText: 'Search...',
                             border: InputBorder.none,
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16.0),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                           ),
                         ),
                       ),
@@ -88,38 +94,21 @@ class RestaurantListPage extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
-    return Consumer<RestaurantProvider>(
-      builder: (context, state, _) {
-        if (state.state == ResultState.loading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state.state == ResultState.hasData) {
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: state.result.restaurants.length,
-            itemBuilder: (context, index) {
-              var restaurant = state.result.restaurants[index];
-              return CardRestaurant(restaurant: restaurant);
-            },
-          );
-        } else if (state.state == ResultState.noData) {
-          return Center(
-            child: Material(
-              child: Text(state.message),
-            ),
-          );
-        } else if (state.state == ResultState.error) {
-          return Center(
-            child: Material(
-              child: Text(state.message),
-            ),
-          );
-        } else {
-          return const Center(
-            child: Material(
-              child: Text(''),
-            ),
-          );
-        }
+    // Menggunakan Provider.of untuk mendapatkan state dari RestaurantProvider
+    var restaurantProvider = Provider.of<RestaurantProvider>(context);
+    var searchProvider = Provider.of<RestaurantSearchProvider>(context);
+
+    List<Restaurant> displayRestaurants =
+    searchProvider.result.restaurants.isNotEmpty
+        ? searchProvider.result.restaurants
+        : restaurantProvider.result.restaurants;
+
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: displayRestaurants.length,
+      itemBuilder: (context, index) {
+        var restaurant = displayRestaurants[index];
+        return CardRestaurant(restaurant: restaurant);
       },
     );
   }
