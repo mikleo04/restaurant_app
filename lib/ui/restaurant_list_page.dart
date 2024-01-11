@@ -39,7 +39,6 @@ class RestaurantListPage extends StatelessWidget {
                         child: TextField(
                           textAlign: TextAlign.start,
                           onChanged: (query) {
-                            // Panggil fungsi pencarian pada RestaurantSearchProvider
                             Provider.of<RestaurantSearchProvider>(
                               context,
                               listen: false,
@@ -94,123 +93,58 @@ class RestaurantListPage extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
-    // Menggunakan Provider.of untuk mendapatkan state dari RestaurantProvider
-    var restaurantProvider = Provider.of<RestaurantProvider>(context);
-    var searchProvider = Provider.of<RestaurantSearchProvider>(context);
+    return Consumer2<RestaurantProvider, RestaurantSearchProvider>(
+      builder: (context, restaurantProvider, searchProvider, child) {
+        List<Restaurant> displayRestaurants =
+        searchProvider.result.restaurants.isNotEmpty
+            ? searchProvider.result.restaurants
+            : restaurantProvider.result.restaurants;
 
-    List<Restaurant> displayRestaurants =
-    searchProvider.result.restaurants.isNotEmpty
-        ? searchProvider.result.restaurants
-        : restaurantProvider.result.restaurants;
-
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: displayRestaurants.length,
-      itemBuilder: (context, index) {
-        var restaurant = displayRestaurants[index];
-        return CardRestaurant(restaurant: restaurant);
+        if (restaurantProvider.state == ResultState.loading ||
+            searchProvider.state == ResultState.loading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (restaurantProvider.state == ResultState.hasData ||
+            searchProvider.state == ResultState.hasData) {
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: displayRestaurants.length,
+            itemBuilder: (context, index) {
+              var restaurant = displayRestaurants[index];
+              return CardRestaurant(restaurant: restaurant);
+            },
+          );
+        } else if (restaurantProvider.state == ResultState.noData ||
+            searchProvider.state == ResultState.noData) {
+          return const Center(
+            child: Column(
+                children: [
+                  Icon(Icons.warning_rounded),
+                  Text("Data tidak tersedia !")
+                ]
+            ),
+          );
+        } else if (restaurantProvider.state == ResultState.error ||
+            searchProvider.state == ResultState.error) {
+          return const Center(
+            child: Column(
+                children: [
+                  Icon(Icons.warning_rounded),
+                  Text("Upss jaringan terputus !")
+                ]
+            ),
+          );
+        } else {
+          return const Center(
+            child: Column(
+                children: [
+                  Icon(Icons.warning_rounded),
+                  Text("Terjadi kesalahan !")
+                ]
+            ),
+          );
+        }
       },
     );
   }
 
-  Widget _buildErrorWidget() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error,
-            color: secondColor,
-          ),
-          Text("Oops... Data gagal dimuat"),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingWidget() {
-    return Center(
-      child: LoadingAnimationWidget.discreteCircle(
-        color: secondColor,
-        secondRingColor: primaryColor,
-        thirdRingColor: primaryColor,
-        size: 50,
-      ),
-    );
-  }
-
-  Widget _buildArticleItem(BuildContext context, Restaurant restaurant) {
-    return Card(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, DetailPage.routeName,
-              arguments: restaurant);
-        },
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10),
-                bottomLeft: Radius.circular(10),
-              ),
-              child: Hero(
-                tag: restaurant.pictureId,
-                child: Image.network(
-                  restaurant.pictureId,
-                  width: 100,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (ctx, error, _) =>
-                      const Center(child: Icon(Icons.error)),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      restaurant.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.location_on_sharp,
-                          size: 15.0,
-                        ),
-                        Text(restaurant.city),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 10, top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.star,
-                    color: Colors.yellow,
-                  ),
-                  Text(
-                    restaurant.rating.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

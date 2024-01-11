@@ -13,7 +13,7 @@ class RestaurantSearchProvider extends ChangeNotifier {
   late RestaurantSearchResult _restaurantSearchResult = RestaurantSearchResult(
     error: false,
     founded: 0,
-    restaurants: [], // Atur sesuai dengan tipe data yang sebenarnya
+    restaurants: [],
   );
   RestaurantSearchResult get result => _restaurantSearchResult;
 
@@ -30,9 +30,8 @@ class RestaurantSearchProvider extends ChangeNotifier {
   Future<dynamic> fetchSearchRestaurant(String query) async {
     try {
       if (query.isEmpty) {
-        // Jika query kosong, reset hasil pencarian
         _searchResults = [];
-        _state = ResultStateSearch.noData; // Anda bisa mengubah status sesuai kebutuhan
+        _state = ResultStateSearch.noData;
         notifyListeners();
       } else {
         _state = ResultStateSearch.loading;

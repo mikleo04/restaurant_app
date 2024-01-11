@@ -31,7 +31,6 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildLoadingWidget(),
             const SizedBox(height: 20),
             Image.asset(
               'assets/restaurant.png',
@@ -49,16 +48,6 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-  Widget _buildLoadingWidget() {
-    return Center(
-      child: LoadingAnimationWidget.discreteCircle(
-        color: secondColor,
-        secondRingColor: Colors.white,
-        thirdRingColor: Colors.grey,
-        size: 50,
       ),
     );
   }
