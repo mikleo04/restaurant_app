@@ -13,7 +13,10 @@ class DetailPage extends StatelessWidget {
   static const routeName = '/article_detail';
   final Restaurant restaurant;
 
-  const DetailPage({super.key, required this.restaurant});
+  DetailPage({super.key, required this.restaurant});
+
+  final TextEditingController reviewController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -140,36 +143,88 @@ class DetailPage extends StatelessWidget {
                           const SizedBox(
                             height: 20,
                           ),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              primary: secondColor,
-                              minimumSize: const Size(double.infinity, 48.0),
+                          Center(
+                            child: Text(
+                              "Review",
+                              style: Theme.of(context).textTheme.headline6,
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                          customerReview(restauranDetail.customerReviews),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: Column(
                                 children: [
-                                  Icon(
-                                    Icons.shopping_cart,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    "PESAN",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 5,
-                                        fontSize: 16
+                                  TextField(
+                                    controller: nameController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Nama',
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: secondColor), // Atur warna border bawah sesuai kebutuhan
+                                      ),
                                     ),
-                                  )
+                                  ),
+                                  SizedBox(height: 10),
+                                  TextField(
+                                    controller: reviewController,
+                                    maxLines: 3,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Tambahkan review...',
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(color: secondColor), // Atur warna border bawah sesuai kebutuhan
+                                        ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: secondColor,
+                                      minimumSize: const Size(double.infinity, 48.0),
+                                    ),
+                                    onPressed: () async {
+                                      String name = nameController.text;
+                                      String newReview = reviewController.text;
+                                      if (name.isNotEmpty && newReview.isNotEmpty) {
+                                          ResultStateDetail result = await state.addReview(
+                                            id: restaurant.id,
+                                            name: name,
+                                            review: newReview,
+                                          );
+
+                                        if (result == ResultStateDetail.success) {
+                                        // Review berhasil ditambahkan, lakukan sesuatu (misalnya, tampilkan pesan sukses)
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                              'Review berhasil ditambahkan'),
+                                            ),
+                                          );
+                                          nameController.clear();
+                                          reviewController.clear();
+                                        } else {
+                                        // Terjadi kesalahan saat menambahkan review, lakukan sesuatu (misalnya, tampilkan pesan error)
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                           const SnackBar(
+                                              content: Text(
+                                              'Gagal menambahkan review'),
+                                              ),
+                                           );
+                                        }
+                                      }
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                        child: Text(
+                                          "Tambah Review",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                          ),
+                                        ),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
                           ),
                         ],
                       ),
@@ -258,4 +313,60 @@ class DetailPage extends StatelessWidget {
       ),
     );
   }
+
+  SizedBox customerReview(review) {
+    return SizedBox(
+      height: 300,
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: review.length,
+        itemExtent: 170.0,
+        itemBuilder: (context, index) {
+          final list = review[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Card(
+              elevation: 5, // Add elevation for a shadow effect
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      list.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      list.date,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Expanded(
+                      child: Text(
+                        list.review,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+
 }

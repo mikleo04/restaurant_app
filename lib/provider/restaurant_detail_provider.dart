@@ -43,7 +43,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
     }
   }
 
-  Future<dynamic> postReview({
+  Future<dynamic> addReview({
     required String id,
     required String name,
     required String review,
@@ -56,7 +56,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
       );
       if (postReviewResult.error == false &&
           postReviewResult.message == 'success') {
-        fetchDetailRestaurant(id);
+        await fetchDetailRestaurant(id);
 
         return ResultStateDetail.success;
       }
@@ -64,7 +64,8 @@ class RestaurantDetailProvider extends ChangeNotifier {
       _state = ResultStateDetail.error;
       notifyListeners();
 
-      return _message = 'Error --> $e';
+      _message = 'Error --> $e';
+      return ResultStateDetail.error;
     }
   }
 }
