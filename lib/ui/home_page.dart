@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/style.dart';
-import 'package:restaurant_app/data/api/api_service.dart';
-import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/ui/restaurant_list_page.dart';
 import 'package:restaurant_app/ui/setting_page.dart';
 

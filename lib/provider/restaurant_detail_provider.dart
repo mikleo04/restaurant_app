@@ -28,9 +28,8 @@ class RestaurantDetailProvider extends ChangeNotifier {
     try {
       _state = ResultStateDetail.loading;
       notifyListeners();
+      final restaurantDetail = await apiService.getRestaurantDetail(restaurantId);
 
-      final restaurantDetail =
-      await apiService.getRestaurantDetail(restaurantId);
       _state = ResultStateDetail.hasData;
       notifyListeners();
 

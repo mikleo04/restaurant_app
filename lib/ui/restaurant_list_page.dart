@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/style.dart';
-import 'package:http/http.dart' as http;
-import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/provider/restaurant_search_provider.dart';
 import 'package:restaurant_app/widgets/card_restaurant.dart';
-import 'detail_page.dart';
 
 
 class RestaurantListPage extends StatelessWidget {
@@ -100,7 +96,9 @@ class RestaurantListPage extends StatelessWidget {
             ? searchProvider.result.restaurants
             : restaurantProvider.result.restaurants;
 
-        if (restaurantProvider.state == ResultState.loading ||
+        if (searchProvider.state == ResultStateSearch.loading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (restaurantProvider.state == ResultState.loading ||
             searchProvider.state == ResultState.loading) {
           return const Center(child: CircularProgressIndicator());
         } else if (restaurantProvider.state == ResultState.hasData ||
@@ -117,30 +115,34 @@ class RestaurantListPage extends StatelessWidget {
             searchProvider.state == ResultState.noData) {
           return const Center(
             child: Column(
-                children: [
-                  Icon(Icons.warning_rounded),
-                  Text("Data tidak tersedia !")
-                ]
+              children: [
+                Icon(Icons.warning_rounded),
+                Text("Data tidak tersedia !")
+              ],
             ),
           );
         } else if (restaurantProvider.state == ResultState.error ||
             searchProvider.state == ResultState.error) {
-          return const Center(
+          return Center(
             child: Column(
-                children: [
-                  Icon(Icons.warning_rounded),
-                  Text("Upss jaringan terputus !")
-                ]
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.warning_rounded),
+                Text("Upps tidak terhubung ke internet !"),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    restaurantProvider.fetchAllRestaurant();
+                  },
+                  child: Text("Refresh"),
+                ),
+              ],
             ),
           );
         } else {
           return const Center(
             child: Column(
-                children: [
-                  Icon(Icons.warning_rounded),
-                  Text("Terjadi kesalahan !")
-                ]
-            ),
+                children: [Icon(Icons.warning_rounded), Text("Terjadi kesalahan !")]),
           );
         }
       },

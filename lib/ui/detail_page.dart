@@ -26,7 +26,7 @@ class DetailPage extends StatelessWidget {
         restaurantId: restaurant.id
       ),
       child: Scaffold(
-        body: Consumer<RestaurantDetailProvider> (
+        body: Consumer<RestaurantDetailProvider>(
           builder: (context, state, _) {
             if (state.state == ResultStateDetail.loading) {
               return const Center(child: CircularProgressIndicator());
@@ -37,26 +37,42 @@ class DetailPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Icon(Icons.warning_rounded),
-                    Text("Data tidak tersedia !")
-                  ]
+                    Text("Data tidak tersedia !"),
+                  ],
                 ),
               );
-            } else if (state.state == ResultState.error) {
-              return const Center(
+            } else if (state.state == ResultStateDetail.error) {
+              return Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.warning_rounded),
-                    Text("Upss jaringan terputus !")
-                  ]
+                    Text("Upps tidak terhubung ke internet !"),
+                    SizedBox(height: 16.0),
+                    TextButton(
+                      onPressed: () {
+                        state.fetchDetailRestaurant(restaurant.id);
+                      },
+                      child: Text("Refresh"),
+                    ),
+                  ],
                 ),
               );
             } else {
-              return const Center(
+              return Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.warning_rounded),
-                    Text("Terjadi kesalahan !")
-                  ]
+                    Text("Upps tidak terhubung ke internet !"),
+                    SizedBox(height: 16.0),
+                    TextButton(
+                      onPressed: () {
+                        state.fetchDetailRestaurant(restaurant.id);
+                      },
+                      child: Text("Refresh"),
+                    ),
+                  ],
                 ),
               );
             }
@@ -87,7 +103,8 @@ class DetailPage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   foreground: Paint()
                     ..style = PaintingStyle.fill
-                    ..color = Colors.white.withOpacity(0.8)),
+                    ..color = Colors.white.withOpacity(0.8)
+              ),
             ),
           ),
           pinned: true,
@@ -146,6 +163,35 @@ class DetailPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 35,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: restauranDetail.categories.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.only(right: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: Text(
+                            restauranDetail.categories[index].name,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -184,9 +230,10 @@ class DetailPage extends StatelessWidget {
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
+                SizedBox(height: 10,),
                 customerReview(restauranDetail.customerReviews),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
                         TextField(
@@ -336,7 +383,8 @@ class DetailPage extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Card(
-              elevation: 5,
+              color: Colors.white,
+
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10))
               ),

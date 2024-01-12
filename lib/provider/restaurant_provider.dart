@@ -9,6 +9,13 @@ class RestaurantProvider extends ChangeNotifier {
   final ApiService apiService;
 
   RestaurantProvider({required this.apiService}) {
+
+    _restaurantsResult = RestaurantsResult(
+      error: false,
+      message: '',
+      count: 0,
+      restaurants: [],
+    );
     fetchAllRestaurant();
   }
 
@@ -21,7 +28,6 @@ class RestaurantProvider extends ChangeNotifier {
 
   RestaurantsResult get result => _restaurantsResult;
   DetailRestaurantResult get resultDetail => _detailRestaurantResult;
-
 
   ResultState get state => _state;
 
@@ -45,5 +51,4 @@ class RestaurantProvider extends ChangeNotifier {
       return _message = 'Error --> $e';
     }
   }
-
 }
