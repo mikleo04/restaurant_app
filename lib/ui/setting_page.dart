@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/style.dart';
+import 'package:restaurant_app/provider/scheduling_provider.dart';
+import 'package:restaurant_app/widgets/custom_dialog.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -24,28 +29,29 @@ class SettingPage extends StatelessWidget {
             trailing: Switch.adaptive(
               activeColor: secondColor,
               value: false,
-              onChanged: (value) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Coming Soon!'),
-                      content: const Text('This feature will be coming soon!'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Ok'),
-                        ),
-                      ],
-                    );
-                  },
+              onChanged: (value) => customDialog(context),
+            ),
+          ),
+        ),
+        Material(
+          child: ListTile(
+            title: const Text('Scheduling Restaurant'),
+            trailing: Consumer<SchedulingProvider>(
+              builder: (context, scheduled, _) {
+                return Switch.adaptive(
+                  value: scheduled.isScheduled,
+                  onChanged: (value) async {
+                    if (Platform.isIOS) {
+                      customDialog(context);
+                    } else {
+                      scheduled.scheduledRestaurant(value);
+                    }
+                  }
                 );
               },
             ),
           ),
-        ),
+        )
       ],
     );
   }

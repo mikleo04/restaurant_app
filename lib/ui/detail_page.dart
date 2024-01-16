@@ -19,7 +19,6 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ChangeNotifierProvider<RestaurantDetailProvider>(
       create: (_) =>  RestaurantDetailProvider(
         apiService: ApiService(http.Client()),
@@ -134,7 +133,7 @@ class DetailPage extends StatelessWidget {
                             style: Theme
                                 .of(context)
                                 .textTheme
-                                .headline5,
+                                .labelMedium,
                           ),
                         ],
                       ),
@@ -156,7 +155,7 @@ class DetailPage extends StatelessWidget {
                             style: Theme
                                 .of(context)
                                 .textTheme
-                                .headline5,
+                                .labelMedium,
                           ),
                         ],
                       ),
@@ -182,7 +181,7 @@ class DetailPage extends StatelessWidget {
                         child: Center(
                           child: Text(
                             restauranDetail.categories[index].name,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
@@ -201,7 +200,7 @@ class DetailPage extends StatelessWidget {
                   style: Theme
                       .of(context)
                       .textTheme
-                      .bodyText2,
+                      .bodyMedium,
                   maxLines: 8,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -209,7 +208,7 @@ class DetailPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   child: Text(
                     "Minuman",
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),
                 buildListMenu(restauranDetail.menus.drinks, 'assets/iced-coffee.png'),
@@ -217,7 +216,7 @@ class DetailPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: Text(
                         "Makanan",
-                        style: Theme.of(context).textTheme.headline6
+                        style: Theme.of(context).textTheme.labelMedium
                     )
                 ),
                 buildListMenu(restauranDetail.menus.foods, 'assets/bibimbap.png'),
@@ -227,7 +226,7 @@ class DetailPage extends StatelessWidget {
                 Center(
                   child: Text(
                     "Review",
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),
                 SizedBox(height: 10,),

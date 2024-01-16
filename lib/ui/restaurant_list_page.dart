@@ -15,7 +15,9 @@ class RestaurantListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Restaurant App'),
+        title: const Text(
+          'Restaurant App',
+        ),
         backgroundColor: primaryColor,
       ),
       body: Padding(
@@ -73,7 +75,7 @@ class RestaurantListPage extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: Text(
                 "The Most Popular Restaurant",
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
             ),
             const SizedBox(
