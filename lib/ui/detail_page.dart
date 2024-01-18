@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:restaurant_app/common/style.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
+import 'package:restaurant_app/provider/database_provider.dart';
 import 'package:restaurant_app/provider/restaurant_detail_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 
@@ -75,6 +76,27 @@ class DetailPage extends StatelessWidget {
                 ),
               );
             }
+          },
+        ),
+        floatingActionButton: Consumer<DatabaseProvider>(
+          builder: (context, provider, _) {
+            return FutureBuilder(
+              future: provider.isFavorite(restaurant.id),
+              builder: (context, snapshot) {
+                var isFavorite = snapshot.data ?? false;
+                return FloatingActionButton(
+                  onPressed: () {
+                    isFavorite
+                        ? provider.removeFavorite(restaurant.id)
+                        : provider.addFavorite(restaurant);
+                  },
+                  child: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.pinkAccent,
+                  ),
+                );
+              }
+            );
           },
         ),
       ),
