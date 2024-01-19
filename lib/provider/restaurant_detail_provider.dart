@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/detail_restaurant.dart';
-
-enum ResultStateDetail { loading, noData, success, hasData, error }
+import 'package:restaurant_app/utils/result_state.dart';
 
 class RestaurantDetailProvider extends ChangeNotifier {
   final ApiService apiService;
@@ -18,24 +17,24 @@ class RestaurantDetailProvider extends ChangeNotifier {
   late DetailRestaurantResult _restaurantDetailResult;
   DetailRestaurantResult get result => _restaurantDetailResult;
 
-  late ResultStateDetail _state;
-  ResultStateDetail get state => _state;
+  late ResultState _state;
+  ResultState get state => _state;
 
   String _message = '';
   String get message => _message;
 
   Future<dynamic> fetchDetailRestaurant(String restaurantId) async {
     try {
-      _state = ResultStateDetail.loading;
+      _state = ResultState.loading;
       notifyListeners();
       final restaurantDetail = await apiService.getRestaurantDetail(restaurantId);
 
-      _state = ResultStateDetail.hasData;
+      _state = ResultState.hasData;
       notifyListeners();
 
       return _restaurantDetailResult = restaurantDetail;
     } catch (e) {
-      _state = ResultStateDetail.error;
+      _state = ResultState.error;
       notifyListeners();
 
       return _message = 'Error --> $e';
@@ -57,14 +56,14 @@ class RestaurantDetailProvider extends ChangeNotifier {
           postReviewResult.message == 'success') {
         await fetchDetailRestaurant(id);
 
-        return ResultStateDetail.success;
+        return ResultState.success;
       }
     } catch (e) {
-      _state = ResultStateDetail.error;
+      _state = ResultState.error;
       notifyListeners();
 
       _message = 'Error --> $e';
-      return ResultStateDetail.error;
+      return ResultState.error;
     }
   }
 }

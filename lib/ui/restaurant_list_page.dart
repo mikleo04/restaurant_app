@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/common/style.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/provider/restaurant_search_provider.dart';
+import 'package:restaurant_app/utils/result_state.dart';
 import 'package:restaurant_app/widgets/card_restaurant.dart';
 
 
@@ -18,7 +18,6 @@ class RestaurantListPage extends StatelessWidget {
         title: const Text(
           'Restaurant App',
         ),
-        backgroundColor: primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -98,7 +97,7 @@ class RestaurantListPage extends StatelessWidget {
             ? searchProvider.result.restaurants
             : restaurantProvider.result.restaurants;
 
-        if (searchProvider.state == ResultStateSearch.loading) {
+        if (searchProvider.state == ResultState.loading) {
           return const Center(child: CircularProgressIndicator());
         } else if (restaurantProvider.state == ResultState.loading ||
             searchProvider.state == ResultState.loading) {

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/data/model/serach_restaurant.dart';
-
-enum ResultStateSearch { loading, noData, success, hasData, error }
+import 'package:restaurant_app/utils/result_state.dart';
 
 class RestaurantSearchProvider extends ChangeNotifier {
   final ApiService apiService;
@@ -17,8 +16,8 @@ class RestaurantSearchProvider extends ChangeNotifier {
   );
   RestaurantSearchResult get result => _restaurantSearchResult;
 
-  ResultStateSearch? _state;
-  ResultStateSearch? get state => _state;
+  ResultState? _state;
+  ResultState? get state => _state;
 
   String _message = '';
   String get message => _message;
@@ -31,27 +30,27 @@ class RestaurantSearchProvider extends ChangeNotifier {
     try {
       if (query.isEmpty) {
         _searchResults = [];
-        _state = ResultStateSearch.noData;
+        _state = ResultState.noData;
         notifyListeners();
       } else {
-        _state = ResultStateSearch.loading;
+        _state = ResultState.loading;
         notifyListeners();
 
         final restaurantSearch = await apiService.getRestaurantSearch(query);
         if (restaurantSearch.founded == 0 &&
             restaurantSearch.restaurants.isEmpty) {
-          _state = ResultStateSearch.noData;
+          _state = ResultState.noData;
           notifyListeners();
           return _message = 'Pencarian Tidak Ditemukan';
         } else {
           _searchResults = restaurantSearch.restaurants;
-          _state = ResultStateSearch.hasData;
+          _state = ResultState.hasData;
           notifyListeners();
           return _restaurantSearchResult = restaurantSearch;
         }
       }
     } catch (e) {
-      _state = ResultStateSearch.error;
+      _state = ResultState.error;
       notifyListeners();
 
       return _message = 'Error --> $e';

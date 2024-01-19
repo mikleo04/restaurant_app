@@ -4,18 +4,24 @@ import 'package:http/http.dart' as http;
 import 'package:restaurant_app/common/style.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
-import 'package:restaurant_app/provider/database_provider.dart';
 import 'package:restaurant_app/provider/restaurant_detail_provider.dart';
-import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/utils/result_state.dart';
+import 'package:restaurant_app/widgets/favorite_button_widget.dart';
 
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   static const routeName = '/article_detail';
   final Restaurant restaurant;
 
-  DetailPage({super.key, required this.restaurant});
+  const DetailPage({super.key, required this.restaurant});
 
+  @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
   final TextEditingController reviewController = TextEditingController();
+
   final TextEditingController nameController = TextEditingController();
 
   @override
@@ -23,14 +29,14 @@ class DetailPage extends StatelessWidget {
     return ChangeNotifierProvider<RestaurantDetailProvider>(
       create: (_) =>  RestaurantDetailProvider(
         apiService: ApiService(http.Client()),
-        restaurantId: restaurant.id
+        restaurantId: widget.restaurant.id
       ),
       child: Scaffold(
         body: Consumer<RestaurantDetailProvider>(
           builder: (context, state, _) {
-            if (state.state == ResultStateDetail.loading) {
+            if (state.state == ResultState.loading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state.state == ResultStateDetail.hasData) {
+            } else if (state.state == ResultState.hasData) {
               return buildDetailRestaurant(context, state);
             } else if (state.state == ResultState.noData) {
               return const Center(
@@ -41,19 +47,19 @@ class DetailPage extends StatelessWidget {
                   ],
                 ),
               );
-            } else if (state.state == ResultStateDetail.error) {
+            } else if (state.state == ResultState.error) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.warning_rounded),
-                    Text("Upps tidak terhubung ke internet !"),
-                    SizedBox(height: 16.0),
+                    const Icon(Icons.warning_rounded),
+                    const Text("Upps tidak terhubung ke internet !"),
+                    const SizedBox(height: 16.0),
                     TextButton(
                       onPressed: () {
-                        state.fetchDetailRestaurant(restaurant.id);
+                        state.fetchDetailRestaurant(widget.restaurant.id);
                       },
-                      child: Text("Refresh"),
+                      child: const Text("Refresh"),
                     ),
                   ],
                 ),
@@ -63,14 +69,14 @@ class DetailPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.warning_rounded),
-                    Text("Upps tidak terhubung ke internet !"),
-                    SizedBox(height: 16.0),
+                    const Icon(Icons.warning_rounded),
+                    const Text("Upps tidak terhubung ke internet !"),
+                    const SizedBox(height: 16.0),
                     TextButton(
                       onPressed: () {
-                        state.fetchDetailRestaurant(restaurant.id);
+                        state.fetchDetailRestaurant(widget.restaurant.id);
                       },
-                      child: Text("Refresh"),
+                      child: const Text("Refresh"),
                     ),
                   ],
                 ),
@@ -78,27 +84,7 @@ class DetailPage extends StatelessWidget {
             }
           },
         ),
-        floatingActionButton: Consumer<DatabaseProvider>(
-          builder: (context, provider, _) {
-            return FutureBuilder(
-              future: provider.isFavorite(restaurant.id),
-              builder: (context, snapshot) {
-                var isFavorite = snapshot.data ?? false;
-                return FloatingActionButton(
-                  onPressed: () {
-                    isFavorite
-                        ? provider.removeFavorite(restaurant.id)
-                        : provider.addFavorite(restaurant);
-                  },
-                  child: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.pinkAccent,
-                  ),
-                );
-              }
-            );
-          },
-        ),
+        floatingActionButton: FavoriteButton(restaurant: widget.restaurant)
       ),
     );
   }
@@ -109,7 +95,6 @@ class DetailPage extends StatelessWidget {
       slivers: [
         SliverAppBar(
           expandedHeight: 200,
-          backgroundColor: primaryColor,
           flexibleSpace: FlexibleSpaceBar(
             background: Hero(
               tag: restauranDetail.pictureId,
@@ -217,7 +202,7 @@ class DetailPage extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  restauranDetail.description ?? "",
+                  restauranDetail.description,
                   textAlign: TextAlign.justify,
                   style: Theme
                       .of(context)
@@ -251,7 +236,7 @@ class DetailPage extends StatelessWidget {
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 customerReview(restauranDetail.customerReviews),
                 Padding(
                   padding: const EdgeInsets.all(20),
@@ -266,7 +251,7 @@ class DetailPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         TextField(
                           controller: reviewController,
                           maxLines: 3,
@@ -277,23 +262,23 @@ class DetailPage extends StatelessWidget {
                               ),
                           ),
                         ),
-                        SizedBox(height: 10,),
+                        const SizedBox(height: 10,),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: secondColor,
+                            backgroundColor: secondColor,
                             minimumSize: const Size(double.infinity, 48.0),
                           ),
                           onPressed: () async {
                             String name = nameController.text;
                             String newReview = reviewController.text;
                             if (name.isNotEmpty && newReview.isNotEmpty) {
-                                ResultStateDetail result = await state.addReview(
-                                  id: restaurant.id,
+                                ResultState result = await state.addReview(
+                                  id: widget.restaurant.id,
                                   name: name,
                                   review: newReview,
                                 );
 
-                              if (result == ResultStateDetail.success) {
+                              if (result == ResultState.success) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
@@ -417,24 +402,24 @@ class DetailPage extends StatelessWidget {
                   children: [
                     Text(
                       list.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       list.date,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Expanded(
                       child: Text(
                         list.review,
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                     ),
                   ],
@@ -446,4 +431,12 @@ class DetailPage extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    reviewController.dispose();
+    nameController.dispose();
+    super.dispose();
+  }
+
 }

@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/data/db/database_helper.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
-import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/utils/result_state.dart';
 
 class DatabaseProvider extends ChangeNotifier {
   final DatabaseHelper databaseHelper;
@@ -25,7 +24,7 @@ class DatabaseProvider extends ChangeNotifier {
     notifyListeners();
 
     _favorite = await databaseHelper.getFavorites();
-    if (_favorite.length > 0) {
+    if (_favorite.isNotEmpty) {
       _state = ResultState.hasData;
     } else {
       _state = ResultState.noData;

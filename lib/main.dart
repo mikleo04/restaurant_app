@@ -21,7 +21,7 @@ import 'package:http/http.dart' as http;
 import 'package:restaurant_app/ui/home_page.dart';
 import 'package:restaurant_app/ui/setting_page.dart';
 import 'package:restaurant_app/ui/splash_screen.dart';
-import 'package:restaurant_app/utils/background_servicce.dart';
+import 'package:restaurant_app/utils/background_service.dart';
 import 'package:restaurant_app/utils/notification_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'common/style.dart';
@@ -102,7 +102,9 @@ class MyApp extends StatelessWidget {
             routes: {
               SplashScreenPage.routeName: (context) => const SplashScreenPage(),
               HomePage.routeName: (context) => const HomePage(),
-              DetailPage.routeName: (context) => DetailPage(restaurant: ModalRoute.of(context)?.settings.arguments as Restaurant,),
+              DetailPage.routeName: (context) => DetailPage(
+                restaurant: ModalRoute.of(context)?.settings.arguments as Restaurant,
+              )
             },
           );
         },
