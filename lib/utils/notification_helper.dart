@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:restaurant_app/common/navigation.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
@@ -35,7 +36,7 @@ class NotificationHelper {
       onDidReceiveNotificationResponse: (NotificationResponse details) async {
       final payload = details.payload;
       if (payload != null) {
-        print('notification payload$payload');
+        debugPrint('notification payload$payload');
       }
       selectNotificationSubject.add(payload ?? 'empty payload');
       });
